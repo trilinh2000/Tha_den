@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thả Đèn Trung Thu Yêu Thương</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: linear-gradient(#00111a, #000814);
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff8dc;
+      text-align: center;
+      height: 100vh;
+    }
+
+    .moon {
+      position: absolute;
+      top: 40px;
+      right: 80px;
+      width: 150px;
+      border-radius: 50%;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    #lanternsContainer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      pointer-events: auto;
+    }
+
+    @keyframes fly {
+      0% { transform: translateY(0) scale(0.7); opacity: 1; }
+      100% { transform: translateY(-140vh) scale(1.1); opacity: 0; }
+    }
+
+    #releaseBtn {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 30px;
+      font-size: 18px;
+      border: none;
+      background: linear-gradient(135deg, #ffb703, #fb8500);
+      color: white;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 153, 0, 0.5);
+      transition: transform 0.2s;
+      z-index: 10;
+    }
+
+    #releaseBtn:hover {
+      transform: translateX(-50%) scale(1.1);
+    }
+
+    /* Popup */
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 20;
+    }
+
+    #popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.9);
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 15px #ffcc00;
+      z-index: 30;
+      color: #fff8dc;
+      width: 80%;
+      max-width: 380px;
+      will-change: transform, opacity;
+    }
+
+    #popup img {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    #popup button {
+      margin-top: 15px;
+      padding: 8px 20px;
+      border: none;
+      border-radius: 20px;
+      background: #fb8500;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(255, 150, 0, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <img class="moon" src="./style/img/Moon.png" alt="Moon" />
+  <div id="lanternsContainer"></div>
+
+  <div id="overlay"></div>
+  <div id="popup">
+    <p id="popupText"></p>
+    <img id="popupImg" src="" alt="Chúc mừng" />
+    <br />
+    <button onclick="closePopup()">Đóng</button>
+  </div>
+
+  <button id="releaseBtn">🎋 Thả đèn Trung Thu 🎋</button>
+  <audio id="bgMusic" src="./style/Nhac.mp3" loop></audio>
+
+  <script>
+    const releaseBtn = document.getElementById("releaseBtn");
+    const container = document.getElementById("lanternsContainer");
+    const popup = document.getElementById("popup");
+    const popupText = document.getElementById("popupText");
+    const popupImg = document.getElementById("popupImg");
+    const overlay = document.getElementById("overlay");
+    const music = document.getElementById("bgMusic");
+
+    const messages = [
+      { text: "🌕 Chúc em Trung Thu vui vẻ, trọn vẹn yêu thương! 💫", img: "./style/img/chuc1.jpg" },
+      { text: "🎋 Mong rằng trăng rằm sẽ mang đến cho em bình an và hạnh phúc 🌸", img: "./style/img/chuc2.jpg" },
+      { text: "💌 Dù ở đâu, em vẫn luôn được yêu thương và nhớ đến 💖", img: "./style/img/chuc3.jpg" },
+      { text: "✨ Chúc em một mùa Trung Thu ấm áp bên gia đình 💛", img: "./style/img/chuc4.jpg" },
+      { text: "🎑 Ước mong đèn lồng soi sáng những ước mơ của em 🌟", img: "./style/img/chuc5.jpg" }
+    ];
+
+    let lanternLoop;
+
+    releaseBtn.addEventListener("click", () => {
+      music.play();
+      releaseBtn.style.display = "none";
+      startLanternLoop();
+    });
+
+    function releaseLanterns() {
+      for (let i = 0; i < 10; i++) { // ít đèn hơn mỗi đợt → mượt
+        setTimeout(() => createLantern(messages[i % messages.length]), i * 500);
+      }
+    }
+
+    function startLanternLoop() {
+      releaseLanterns();
+      lanternLoop = setInterval(releaseLanterns, 12000);
+    }
+
+    function createLantern(msg) {
+      const lantern = document.createElement("img");
+      lantern.src = "./style/img/lantern.png";
+      lantern.style.position = "absolute";
+      lantern.style.bottom = "-120px";
+      lantern.style.left = Math.random() * 90 + "%";
+      lantern.style.width = Math.random() * 40 + 50 + "px";
+      lantern.style.cursor = "pointer";
+      lantern.style.willChange = "transform, opacity";
+
+      const duration = 10 + Math.random() * 5;
+      lantern.style.animation = `fly ${duration}s linear forwards`;
+
+      lantern.addEventListener("click", (e) => {
+        e.stopPropagation();
+        showPopup(msg);
+      });
+
+      container.appendChild(lantern);
+      setTimeout(() => lantern.remove(), (duration + 1) * 1000);
+    }
+
+    function showPopup(msg) {
+      popupText.textContent = msg.text;
+      popupImg.src = msg.img;
+      overlay.style.display = "block";
+      popup.style.display = "block";
+    }
+
+    function closePopup() {
+      overlay.style.display = "none";
+      popup.style.display = "none";
+    }
+  </script>
+</body>
+</html>
